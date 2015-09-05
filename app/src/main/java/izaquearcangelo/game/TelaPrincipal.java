@@ -25,7 +25,7 @@ public class TelaPrincipal extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
-        jogo = new Game(getApplicationContext()); // Também poderia ser utilizado 'this'
+        jogo = new Game(this); // Também poderia ser utilizado 'this'
         setContentView(jogo);
     }
 
@@ -33,5 +33,11 @@ public class TelaPrincipal extends Activity {
     protected void onResume() {
         super.onResume();
         jogo.iniciarJogo(); // inicia o loop do jogo.
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        jogo.pausarJogo();
     }
 }

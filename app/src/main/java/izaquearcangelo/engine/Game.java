@@ -1,6 +1,10 @@
 package izaquearcangelo.engine;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 /**
@@ -9,22 +13,41 @@ import android.view.SurfaceView;
  */
 public class Game extends SurfaceView implements Runnable {
 
-    boolean jogoIniciado;
-    Thread renderTheread = null;
+    private boolean jogoIniciado;
+    private Thread renderTheread = null;
+    private SurfaceHolder surfaceHolder;
+    private Paint paint;
+    private Canvas canvas;
 
+    /**
+     * Construtor principal responsável por iniciar os objetos que serão utilizados para manipular a tela.
+     */
     public Game(Context context) {
         super(context);
+        canvas = new Canvas();
+        paint = new Paint(); // Desenha elementos na tela.
+        surfaceHolder = getHolder(); // Manipula a tela, verifica se está "pronta".
     }
 
     /**
-     * Todo o controle do loop do jogo é feito neste método com uma flag
-     * de inicialização.
+     * Todo o controle do loop do jogo é feito neste método com uma flag de inicialização.
      */
     @Override
     public void run() {
         while (jogoIniciado){
-            System.out.println("Jogo Iniciado."); //// FIXME: 04/09/2015 Remover este código
-        }
+            //Verifica se a tela está pronta.
+            if(!surfaceHolder.getSurface().isValid())
+                continue;
+                //Bloqueia a tela para desenhar
+                canvas = surfaceHolder.lockCanvas();
+
+                circulo(canvas);
+
+                // atualiza e libera tela.
+                System.out.println("Jogo Iniciado."); //// FIXME: 04/09/2015 Remover este código
+                surfaceHolder.unlockCanvasAndPost(canvas);
+            }
+
     }
 
     /**
@@ -34,5 +57,15 @@ public class Game extends SurfaceView implements Runnable {
         jogoIniciado = true;
         renderTheread = new Thread(this);
         renderTheread.start();
+    }
+
+    public void pausarJogo(){
+        jogoIniciado = false;
+        renderTheread = null;
+    }
+
+    private void circulo(Canvas canvas){
+        paint.setColor(Color.GREEN);
+        canvas.drawRect(200, 200, 400, 400, paint);
     }
 }
