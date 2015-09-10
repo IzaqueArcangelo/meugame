@@ -4,8 +4,16 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import izaquearcangelo.game.TelaPrincipal;
+import izaquearcangelo.pecas.Peca;
+import izaquearcangelo.pecas.PecaDois;
+import izaquearcangelo.pecas.PecaTres;
 
 /**
  * @author Izaque
@@ -17,16 +25,30 @@ public class Game extends SurfaceView implements Runnable {
     private Thread renderTheread = null;
     private SurfaceHolder surfaceHolder;
     private Paint paint;
-    private Canvas canvas;
+    private Point point;
+    private Peca pecaUm;
+    private PecaDois pecaDois;
+    private PecaTres pecaTres;
+
+
 
     /**
      * Construtor principal responsável por iniciar os objetos que serão utilizados para manipular a tela.
      */
     public Game(Context context) {
         super(context);
-        canvas = new Canvas();
         paint = new Paint(); // Desenha elementos na tela.
         surfaceHolder = getHolder(); // Manipula a tela, verifica se está "pronta".
+    }
+
+    public Game(Context context, Point point) {
+        super(context);
+        paint = new Paint();
+        surfaceHolder = getHolder();
+        this.point = point;
+        pecaUm = new Peca(context, point);
+        pecaDois = new PecaDois(context, point);
+        pecaTres = new PecaTres(context, point);
     }
 
     /**
@@ -39,9 +61,14 @@ public class Game extends SurfaceView implements Runnable {
             if(!surfaceHolder.getSurface().isValid())
                 continue;
                 //Bloqueia a tela para desenhar
-                canvas = surfaceHolder.lockCanvas();
+                Canvas canvas = surfaceHolder.lockCanvas();
+                canvas.drawColor(Color.BLACK);
 
-                circulo(canvas);
+                //quadrado(canvas);
+
+                pecaUm.quadrado(canvas);
+                pecaDois.quadrado(canvas);
+                pecaTres.quadrado(canvas);
 
                 // atualiza e libera tela.
                 System.out.println("Jogo Iniciado."); //// FIXME: 04/09/2015 Remover este código
@@ -64,8 +91,4 @@ public class Game extends SurfaceView implements Runnable {
         renderTheread = null;
     }
 
-    private void circulo(Canvas canvas){
-        paint.setColor(Color.GREEN);
-        canvas.drawRect(200, 200, 400, 400, paint);
-    }
 }
